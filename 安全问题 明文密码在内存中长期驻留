@@ -23,16 +23,10 @@ SELECT * FROM byte[] s WHERE toString(s) LIKE ".*password.*"
 通过反射的方式清除
 
 ```
-    /**
-     * 处理String类型在内存的
-     *
-     * @param str 目标字符串对象
-     */
     private static void releaseStringSenseInfo(String str) {
         if (str == null || str.isEmpty()) {
             return;
         }
-        // 使用反射模式進行内存信息清除
         try {
             Field valueFieldOfString = String.class.getDeclaredField("value");
             valueFieldOfString.setAccessible(Boolean.TRUE);
@@ -40,7 +34,6 @@ SELECT * FROM byte[] s WHERE toString(s) LIKE ".*password.*"
             for (int i = 0; i < value.length; i++) {
                 value[i] = 0;
             }
-            // 异常不允许抛出到外部函数，即使回收失败也不能影响业务正常运行
         } catch (Exception e) {
             logger.warn("Fail to eliminate sense info.");
         }
