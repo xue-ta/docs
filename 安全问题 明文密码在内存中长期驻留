@@ -1,0 +1,50 @@
+#### 内存中明文密码长期驻留
+
+##### 排查方法
+
+使用jmap工具 dump内存文件
+
+```
+./jdk1.8.0_262/bin/jmap -dump:format=b,file=/home/ivs_restful/heap.bin
+```
+
+使用MAT 打开dump文件 使用QQL
+
+```
+SELECT * FROM byte[] s WHERE toString(s) LIKE ".*password.*"
+```
+
+可以查看内存中是否驻留明文密码
+
+
+
+##### 解决方法
+
+通过反射的方式清除
+
+```
+    /**
+     * 处理String类型在内存的
+     *
+     * @param str 目标字符串对象
+     */
+    private static void releaseStringSenseInfo(String str) {
+        if (str == null || str.isEmpty()) {
+            return;
+        }
+        // 使用反射模式進行内存信息清除
+        try {
+            Field valueFieldOfString = String.class.getDeclaredField("value");
+            valueFieldOfString.setAccessible(Boolean.TRUE);
+            char[] value = (char[]) valueFieldOfString.get(str);
+            for (int i = 0; i < value.length; i++) {
+                value[i] = 0;
+            }
+            // 异常不允许抛出到外部函数，即使回收失败也不能影响业务正常运行
+        } catch (Exception e) {
+            logger.warn("Fail to eliminate sense info.");
+        }
+    }
+```
+
+或者将密码保存在char数组中 使用过后清除
