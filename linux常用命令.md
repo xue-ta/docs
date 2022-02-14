@@ -5,5 +5,5 @@
 - 查看服务进程 ``` ps -ef ```
 - 查看内存 CPU ```top```
 - 设置定时任务 ```crontab -e ```
-- 压缩日志里面统计关键字```zgrep "receive request" ./VCNPCGService_2*.log.zip | wc -l ``
+- 压缩日志里面统计关键字 ```zgrep "receive request" ./VCNPCGService_2*.log.zip | wc -l ``
 
