@@ -283,7 +283,7 @@ class Solution {
 }
 ```
 #### 二叉树
-#### [337\. 打家劫舍 III](https://leetcode-cn.com/problems/house-robber-iii/)
+##### [337\. 打家劫舍 III](https://leetcode-cn.com/problems/house-robber-iii/)
 ```java
 /**
  * Definition for a binary tree node.
@@ -435,7 +435,7 @@ class Solution {
 }
 
 ```
-#### [543\. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+##### [543\. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
 ```java
 /**
  * Definition for a binary tree node.
@@ -959,7 +959,7 @@ class Solution6472 {
 
 #### 位运算
 
-#### [338\. 比特位计数](https://leetcode-cn.com/problems/counting-bits/)
+##### [338\. 比特位计数](https://leetcode-cn.com/problems/counting-bits/)
 ```java
 class Solution {
     public int[] countBits(int num) {
@@ -1145,7 +1145,6 @@ public class Solution {
 }
 ```
 
-
 ## 多线程
 
 - Semaphore
@@ -1154,3 +1153,51 @@ public class Solution {
 - ReentrantLock
 - synchronized
 - BlockingQueue
+
+###### 交替打印奇偶数
+
+```
+class OddEven {
+    private int n=0;
+
+    private volatile boolean odd=true;
+
+    private String lock=new String("lock");
+
+
+    public void odd() throws InterruptedException {
+
+        while(n<100) {
+            synchronized (lock){
+                while(!odd){
+                    lock.wait();
+                }
+                print(n);
+                n++;
+                odd=false;
+                lock.notify();
+            }
+        }
+    }
+
+    public void even() throws InterruptedException {
+
+        while(n<100) {
+            synchronized (lock){
+                while(odd){
+                    lock.wait();
+                }
+                print(n);
+                n++;
+                odd=true;
+                lock.notify();
+            }
+        }
+    }
+
+    private void print(int i){
+        System.out.println(i);
+    }
+}
+```
+
