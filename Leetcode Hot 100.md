@@ -618,6 +618,24 @@ class Solution {
 
 #### 哈希表
 
+##### [1. 两数之和](https://leetcode-cn.com/problems/two-sum/)
+
+```
+    public int[] twoSum(int[] nums, int target) {
+        HashMap<Integer,Integer> hashMap=new HashMap<>();
+
+        for(int i=0;i<nums.length;i++){
+            if(hashMap.containsKey(target-nums[i])) {
+                return new int[]{i, hashMap.get(target - nums[i])};
+            }
+            hashMap.put(nums[i],i);
+        }
+        return new int[]{};
+    }
+```
+
+
+
    ##### [任务规划](http://3ms.huawei.com/km/groups/3803117/blogs/details/9544197?l=zh-cn)
 
    ```java
@@ -645,6 +663,49 @@ class Solution {
    ```
 
 #### 链表
+
+##### [2. 两数相加](https://leetcode-cn.com/problems/add-two-numbers/)
+
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        return addTwoNumbers0(l1,l2,0);
+    }
+
+    private ListNode addTwoNumbers0(ListNode l1, ListNode l2,int c){
+
+        if(l1==null)
+            return addTwoNumbers0(l2,c);
+        if(l2==null)
+            return addTwoNumbers0(l1,c);
+        ListNode root =new ListNode((l1.val+l2.val+c)%10);
+        root.next=addTwoNumbers0(l1.next,l2.next,(l1.val+l2.val+c)/10);
+        return root;
+    }
+
+    private ListNode addTwoNumbers0(ListNode l,int c){
+        if(l==null&&c!=0){
+            return new ListNode(c);
+        }
+        if(l==null) return null;
+        ListNode root=new ListNode((l.val+c)%10);
+        root.next=addTwoNumbers0(l.next,(l.val+c)/10);
+        return root;
+    }
+}
+```
+
+
 
 ##### [143. 重排链表](https://leetcode-cn.com/problems/reorder-list/)
 
@@ -767,6 +828,32 @@ public class Solution {
 #### 滑动窗口
 
 ##### [3. 无重复字符的最长子串](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/)
+
+更简单易懂一点的方法
+
+```
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int maxLen=0,l=0;
+        HashMap<Character,Integer> map=new HashMap();
+        for(int r=0;r<s.length();r++){
+            map.put(s.charAt(r),map.getOrDefault(s.charAt(r),0)+1);
+            while(map.entrySet().size()<r-l+1){
+                if(map.get(s.charAt(l))>1){
+                    map.put(s.charAt(l),map.getOrDefault(s.charAt(l),0)-1);
+                }else{
+                    map.remove(s.charAt(l));
+                }
+                l++;
+            }
+            maxLen=Math.max(maxLen,r-l+1);
+        }
+        return maxLen;
+    }
+}
+```
+
+
 
 ```java
 class Solution {
