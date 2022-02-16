@@ -266,6 +266,48 @@ class Solution {
 - 树与图：最近公共祖先、并查集
 - 字符串：前缀树（字典树） ／ 后缀树
 
+
+
+#### 字符串
+
+##### [5. 最长回文子串](https://leetcode-cn.com/problems/longest-palindromic-substring/)
+
+```
+            public String longestPalindrome(String s) {
+                char[] chars=s.toCharArray();
+                int start = 0, end = 0;
+                for(int i=0;i<s.length()-1;i++){
+                    int len1=findLong(i,i,chars);
+                    int len2=findLong(i,i+1,chars);
+                    if(Math.max(len1,len2)>end-start) {
+                        if (len1 > len2) {
+                            start = i - (len1 - 1) / 2;
+                            end = i + (len1 - 1) / 2;
+                        } else {
+                            start = i - (len2 - 2) / 2;
+                            end = i + 1 + (len2 - 2) / 2;
+                        }
+                    }
+                }
+                return s.substring(start,end+1);
+            }
+
+
+            private int findLong(int l,int r,char[] chars){
+
+                while(l>=0&&r<chars.length){
+                    if(chars[l]==chars[r]) {
+                        l--;
+                        r++;
+                    }
+                    else break;
+                }
+                return r-l-1;
+            }
+```
+
+
+
 #### 线性表
 ```java
 class Solution {
@@ -761,6 +803,67 @@ class Solution {
 ## 技巧
 
 #### 双指针
+
+##### [11. 盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
+
+```
+class Solution {
+    public int maxArea(int[] height) {
+        int left=0,right=height.length-1;
+        int maxArea=0;
+        while(left<right){
+            maxArea=Math.max(maxArea,Math.min(height[left],height[right])*(right-left));
+            if(height[right]>height[left]){
+                left++;
+            }else {
+                right--;
+            }
+        }
+        return maxArea;
+    }
+}
+
+```
+
+##### [15. 三数之和](https://leetcode-cn.com/problems/3sum/)
+
+```
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        if (nums == null || nums.length < 3)
+            return new ArrayList<>();
+
+        List<List<Integer>> res = new ArrayList<>();
+
+        Arrays.sort(nums); // O(nlogn)
+
+        // O(n^2)
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            int target = -nums[i];
+            int left = i + 1;
+            int right = nums.length - 1;
+            while (left < right) {
+                int sum = nums[left] + nums[right];
+                if (sum == target) {
+                    res.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    // 去重
+                    while (left < right && nums[left] == nums[++left]);
+                    while (left < right && nums[right] == nums[--right]);
+                } else if (sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+
+        return res;
+    }
+}
+```
+
+
 
 ##### [581\. 最短无序连续子数组](https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/)
 
