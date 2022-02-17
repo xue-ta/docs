@@ -125,6 +125,109 @@ class Solution {
 
 ### 回溯
 
+##### [17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)
+
+```
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> combinations = new ArrayList<String>();
+        if (digits.length() == 0) {
+            return combinations;
+        }
+        Map<Character, String> phoneMap = new HashMap<Character, String>() {{
+            put('2', "abc");
+            put('3', "def");
+            put('4', "ghi");
+            put('5', "jkl");
+            put('6', "mno");
+            put('7', "pqrs");
+            put('8', "tuv");
+            put('9', "wxyz");
+        }};
+
+        backTrack(phoneMap,0,combinations,digits,new StringBuilder());
+        return combinations;
+
+    }
+
+    private void backTrack(Map<Character,String> map,int length,List<String> result,String digits,StringBuilder temp){
+        if(length==digits.length()){
+            result.add(temp.toString());
+            return;
+        }
+        for(int i=0;i<map.get(digits.charAt(length)).length();i++){
+            temp.append(map.get(digits.charAt(length)).charAt(i));
+            backTrack(map,length+1,result,digits,temp);
+            temp.deleteCharAt(length);
+        }
+    }
+}
+```
+
+##### [22. 括号生成](https://leetcode-cn.com/problems/generate-parentheses/)
+
+```
+class Solution {
+    List<String> result=new ArrayList<>();
+    public List<String> generateParenthesis(int n) {
+        int open=0,close=0;
+        back(n,0,0,new StringBuilder());
+        return result;
+    }
+
+    private void back(int max,int open,int close,StringBuilder s){
+        if(open+close==max*2){
+            result.add(s.toString());
+            return;
+        }
+        if(open<max){
+            s.append("(");
+            back(max,open+1,close,s);
+            s.deleteCharAt(s.length()-1);
+        }
+        if(open>close){
+            s.append(")");
+            back(max,open,close+1,s);
+            s.deleteCharAt(s.length()-1);
+        }
+
+    }
+}
+
+```
+
+##### [39. 组合总和](https://leetcode-cn.com/problems/combination-sum/)
+
+```
+class Solution {
+    List<List<Integer>> res = new ArrayList<>(); //记录答案
+    List<Integer> path = new ArrayList<>();  //记录路径
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        dfs(candidates,0, target);
+        return res;
+    }
+    public void dfs(int[] c, int u, int target) {
+        if(target < 0) return ;
+        if(target == 0)
+        {
+            res.add(new ArrayList(path));
+            return ;
+        }
+        for(int i = u; i < c.length; i++){
+            if( c[i] <= target)  
+            {
+                path.add(c[i]);
+                dfs(c,i,target -  c[i]); // 因为可以重复使用，所以还是i
+                path.remove(path.size()-1); //回溯，恢复现场
+            }
+        }
+    }
+}
+```
+
+
+
 ##### [494\. 目标和](https://leetcode-cn.com/problems/target-sum/)
 
 ```java
@@ -513,24 +616,33 @@ class Solution {
 
 ```
 
-
 #### 栈
 
-##### [21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
+##### [20. 有效的括号](https://leetcode-cn.com/problems/valid-parentheses/)
 
-```java
-        public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-            if(l1==null) return l2;
-            if(l2==null) return l1;
-            if(l1.val<l2.val){
-                l1.next=mergeTwoLists(l1.next,l2);
-                return l1;
+```
+class Solution {
+    public boolean isValid(String s) {
+        HashMap<Character,Character> hashMap=new HashMap<>();
+        hashMap.put('}','{');
+        hashMap.put(']','[');
+        hashMap.put(')','(');
+        LinkedList<Character> stack=new LinkedList<>();
+        for(int i=0;i<s.length();i++){
+            if(stack.isEmpty()){
+                stack.push(s.charAt(i));
+            }else if(hashMap.get(s.charAt(i))==stack.peek()){
+                stack.pop();
             }else{
-                l2.next=mergeTwoLists(l1, l2.next);
-                return l2;
+                stack.push(s.charAt(i));
             }
         }
+        return stack.isEmpty();
+    }
+}
 ```
+
+
 
 
 
@@ -747,6 +859,22 @@ class Solution {
 }
 ```
 
+##### [21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
+
+```java
+        public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+            if(l1==null) return l2;
+            if(l2==null) return l1;
+            if(l1.val<l2.val){
+                l1.next=mergeTwoLists(l1.next,l2);
+                return l1;
+            }else{
+                l2.next=mergeTwoLists(l1, l2.next);
+                return l2;
+            }
+        }
+```
+
 
 
 ##### [143. 重排链表](https://leetcode-cn.com/problems/reorder-list/)
@@ -802,6 +930,87 @@ class Solution {
 
 ## 技巧
 
+#### 二分法
+
+##### [33. 搜索旋转排序数组](https://leetcode-cn.com/problems/search-in-rotated-sorted-array/)
+
+```
+class Solution {
+    public int search(int[] nums, int target) {
+        int n = nums.length;
+        if (n == 0) {
+            return -1;
+        }
+        if (n == 1) {
+            return nums[0] == target ? 0 : -1;
+        }
+        int l = 0, r = n - 1;
+        while (l <= r) {
+            int mid = (l + r) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            }
+
+            //左侧
+            if (nums[0] <= nums[mid]) {
+                if (nums[0] <= target && target < nums[mid]) {
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            } else {//右侧
+                if (nums[mid] < target && target <= nums[n - 1]) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+}
+```
+
+
+
+##### [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+
+```
+class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int[] range = new int[]{-1,-1};
+        range[0] = searchRes(nums,target,true);
+        range[1] = searchRes(nums,target,false);
+        return range;
+    }
+    public int searchRes(int[] nums,int target,boolean isleft){
+        int res = -1;
+        int left = 0;
+        int right = nums.length-1;
+        while (left <= right){
+            int mid = left + (right-left)/2;
+            if(target < nums[mid]){
+                right = mid-1;
+            }else if(target > nums[mid]){
+                left = mid +1;
+            }else{
+            	//最后一次匹配的地方
+                res = mid;
+                if(isleft){
+                    right = mid - 1;
+                }else{
+                    left = mid + 1;
+                }
+            }
+        }
+
+        return res;
+    }
+}
+```
+
+
+
 #### 双指针
 
 ##### [11. 盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
@@ -824,6 +1033,34 @@ class Solution {
 }
 
 ```
+
+##### [42. 接雨水](https://leetcode-cn.com/problems/trapping-rain-water/)
+
+```
+class Solution {
+    public int trap(int[] height) {
+        int sum = 0;
+
+        int[] leftMax=new int[height.length];
+        int[] rightMax=new int[height.length];
+        for(int i=1;i< height.length-1;i++){
+            leftMax[i]=Math.max(leftMax[i-1],height[i-1]);
+        }
+        for(int j= height.length-2;j>0;j--){
+            rightMax[j]=Math.max(rightMax[j+1],height[j+1]);
+        }
+
+        for(int i=1;i< height.length-1;i++){
+            if(Math.min(leftMax[i],rightMax[i])>height[i]){
+                sum=sum+Math.min(leftMax[i],rightMax[i])-height[i];
+            }
+        }
+        return sum;
+    }
+}
+```
+
+
 
 ##### [15. 三数之和](https://leetcode-cn.com/problems/3sum/)
 
@@ -859,6 +1096,29 @@ class Solution {
         }
 
         return res;
+    }
+}
+```
+
+
+
+##### [19. 删除链表的倒数第 N 个结点](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/)
+
+```
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode slow= head;
+        ListNode fast=head;
+        for(int i=0;i<=n;i++){
+            if(fast==null&&i==n) return head.next;
+            fast=fast.next;
+        }
+        while(fast!=null){
+            fast=fast.next;
+            slow=slow.next;
+        }
+        slow.next=slow.next.next;
+        return head;
     }
 }
 ```
