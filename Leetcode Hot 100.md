@@ -7,6 +7,51 @@
 - 动态规划：背包问题、最长子序列
 
 ### 动态规划
+
+##### [53. 最大子数组和](https://leetcode-cn.com/problems/maximum-subarray/)
+
+```
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int max=Integer.MIN_VALUE;
+        int cursum=0;
+        for(int i=0;i<nums.length;i++){
+            if(cursum<0){
+                cursum=nums[i];
+            }else{
+                cursum=cursum+nums[i];
+            }
+            max=Math.max(cursum,max);
+        }
+        return max;
+    }
+}
+```
+
+##### [62. 不同路径](https://leetcode-cn.com/problems/unique-paths/)
+
+```
+class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] dp=new int[m][n];
+        for(int i=0;i<=m-1;i++){
+            dp[i][0]=1;
+        }
+        for(int i=0;i<=n-1;i++){
+            dp[0][i]=1;
+        }
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                dp[i][j]=dp[i][j-1]+dp[i-1][j];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+}
+```
+
+
+
 ##### [312\. 戳气球](https://leetcode-cn.com/problems/burst-balloons/)
 ```java
 class Solution {
@@ -226,6 +271,31 @@ class Solution {
 }
 ```
 
+##### [46. 全排列](https://leetcode-cn.com/problems/permutations/)
+
+```
+    List<List<Integer>> ret=new ArrayList<>();
+    public List<List<Integer>> permute(int[] nums) {
+        backTrack(nums,new ArrayList<>(),new int[nums.length]);
+        return ret;
+    }
+
+    private void backTrack(int[] nums,List<Integer> temp,int[] mark){
+        if(temp.size()==nums.length){
+            ret.add(new ArrayList<>(temp));
+        }
+        for(int i=0;i<nums.length;i++){
+            if(mark[i]==0) {
+                mark[i]=1;
+                temp.add(nums[i]);
+                backTrack(nums,temp,mark);
+                mark[i]=0;
+                temp.remove(temp.size()-1);
+            }
+        }
+    }
+```
+
 
 
 ##### [494\. 目标和](https://leetcode-cn.com/problems/target-sum/)
@@ -252,6 +322,29 @@ class Solution {
 }
 ```
 ### 贪心
+
+
+
+##### [55. 跳跃游戏](https://leetcode-cn.com/problems/jump-game/)
+
+```
+class Solution {
+    public boolean canJump(int[] nums) {
+        int max=0;
+        for(int i=0;i<nums.length;i++){
+            if(i<=max){
+                max=Math.max(max,i+nums[i]);
+            }
+            if(max>=nums.length-1){
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+
+
 
 ##### [45. 跳跃游戏 II](https://leetcode-cn.com/problems/jump-game-ii/)
 
@@ -407,6 +500,36 @@ class Solution {
                 }
                 return r-l-1;
             }
+```
+
+##### [49. 字母异位词分组](https://leetcode-cn.com/problems/group-anagrams/)
+
+```
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (String str : strs) {
+            int[] counts = new int[26];
+            int length = str.length();
+            for (int i = 0; i < length; i++) {
+                counts[str.charAt(i) - 'a']++;
+            }
+            // 将每个出现次数大于 0 的字母和出现次数按顺序拼接成字符串，作为哈希表的键
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < 26; i++) {
+                if (counts[i] != 0) {
+                    sb.append((char) ('a' + i));
+                    sb.append(counts[i]);
+                }
+            }
+            String key = sb.toString();
+            List<String> list = map.getOrDefault(key, new ArrayList<String>());
+            list.add(str);
+            map.put(key, list);
+        }
+        return new ArrayList<List<String>>(map.values());
+    }
+}
 ```
 
 
@@ -1378,8 +1501,32 @@ class Solution {
 
 ```
 
-
 #### 先排序 
+
+##### [56. 合并区间](https://leetcode-cn.com/problems/merge-intervals/)
+
+```
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        List<int[]> merged=new ArrayList<>();
+        Arrays.sort(intervals,(o1,o2)->o1[0]-o2[0]);
+
+        for(int i=0;i<intervals.length;i++){
+            int l=intervals[i][0],r=intervals[i][1];
+            if (merged.size() == 0 || merged.get(merged.size() - 1)[1] < l) {
+                merged.add(new int[]{l, r});
+            }else{
+                merged.get(merged.size()-1)[1]=Math.max(merged.get(merged.size()-1)[1],r);
+            }
+        }
+
+        return merged.toArray(new int[merged.size()-1][]);
+    }
+}
+```
+
+
+
 ##### [406\. 根据身高重建队列](https://leetcode-cn.com/problems/queue-reconstruction-by-height/)
 ```java
 class Solution {
