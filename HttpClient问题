@@ -1,0 +1,40 @@
+```
+    CloseableHttpClient httpclient = HttpClients.createDefault();
+    HttpGet httpGet = new HttpGet("http://targethost/homepage");
+    CloseableHttpResponse response1 = httpclient.execute(httpGet);
+    // The underlying HTTP connection is still held by the response object
+    // to allow the response content to be streamed directly from the network socket.
+    // In order to ensure correct deallocation of system resources
+    // the user MUST either fully consume the response content  or abort request
+    // execution by calling CloseableHttpResponse#close().
+    //建立的http连接，仍旧被response1保持着，允许我们从网络socket中获取返回的数据
+    //为了释放资源，我们必须手动消耗掉response1或者取消连接（使用CloseableHttpResponse类的close方法）
+
+    try {
+        System.out.println(response1.getStatusLine());
+        HttpEntity entity1 = response1.getEntity();
+        // do something useful with the response body
+        // and ensure it is fully consumed
+        EntityUtils.consume(entity1);
+    } finally {
+        response1.close();
+    }
+```
+
+使用HttpClient时候 如果不在finally 块中释放response，可能导致连接池泄漏  如果连接池连接耗尽 会产生如下错误
+
+```
+org.apache.http.conn.ConnectionPoolTimeoutException: Timeout waiting for connection from pool
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.leaseConnection(PoolingHttpClientConnectionManager.java:316)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager$1.get(PoolingHttpClientConnectionManager.java:282)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:190)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:108)
+	at com.huawei.utils.http.HttpClientUtil.sendRequest(HttpClientUtil.java:392)
+	at com.huawei.utils.http.HttpClientUtil.sendPostRequest(HttpClientUtil.java:328)
+```
+
