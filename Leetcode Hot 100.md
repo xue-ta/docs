@@ -50,6 +50,82 @@ class Solution {
 }
 ```
 
+##### [64. 最小路径和](https://leetcode-cn.com/problems/minimum-path-sum/)
+
+```
+class Solution {
+    public int minPathSum(int[][] grid) {
+        int m=grid.length,n=grid[0].length;
+        int[][] dp=new int[m][n];
+        int sum=0;
+        for(int i=0;i<=m-1;i++){
+            sum=grid[i][0]+sum;
+            dp[i][0]=sum;
+        }
+        sum=0;
+        for(int i=0;i<=n-1;i++){
+            sum=grid[0][i]+sum;
+            dp[0][i]=sum;
+        }
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                dp[i][j]=Math.min(dp[i-1][j],dp[i][j-1])+grid[i][j];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+}
+```
+
+##### [70. 爬楼梯](https://leetcode-cn.com/problems/climbing-stairs/)
+
+```
+class Solution {
+    public int climbStairs(int n) {
+        int[] dp=new int[n+1];
+        dp[0]=1;
+        dp[1]=1;
+        for(int i=2;i<=n;i++){
+            dp[i]=dp[i-1]+dp[i-2];
+        }
+        return dp[n];
+    }
+}
+```
+
+##### [72. 编辑距离](https://leetcode-cn.com/problems/edit-distance/)
+
+```
+class Solution {
+    public int minDistance(String word1, String word2) {
+
+        if(word1.length()==0){
+            return word2.length();
+        }
+        if(word2.length()==0){
+            return word1.length();
+        }
+        int m=word1.length(),n=word2.length();
+        int[][] dp=new int[m+1][n+1];
+        for(int i=1;i<=m;i++){
+            dp[i][0]=i;
+        }
+        for(int i=1;i<=n;i++){
+            dp[0][i]=i;
+        }
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(word1.charAt(i-1)==word2.charAt(j-1)){
+                    dp[i][j]=dp[i-1][j-1];
+                }else {
+                    dp[i][j] = Math.min(dp[i - 1][j-1]+1,Math.min(dp[i-1][j],dp[i][j-1])+1);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+```
+
 
 
 ##### [312\. 戳气球](https://leetcode-cn.com/problems/burst-balloons/)
@@ -298,6 +374,31 @@ class Solution {
 
 
 
+##### [78. 子集](https://leetcode-cn.com/problems/subsets/)
+
+```
+class Solution {
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        backtrack(0, nums, res, new ArrayList<Integer>());
+        return res;
+
+    }
+
+    private void backtrack(int cur, int[] nums, List<List<Integer>> res, ArrayList<Integer> tmp) {
+        res.add(new ArrayList<>(tmp));
+        for (int j = cur; j < nums.length; j++) {
+            tmp.add(nums[j]);
+            backtrack(j + 1, nums, res, tmp);
+            tmp.remove(tmp.size() - 1);
+        }
+    }
+
+}
+```
+
+
+
 ##### [494\. 目标和](https://leetcode-cn.com/problems/target-sum/)
 
 ```java
@@ -451,6 +552,53 @@ class Solution {
 }
 
 ```
+
+### 搜索
+
+#### 深度优先
+
+##### [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
+
+```
+    int[][] direct=new int[][]{{0,1},{0,-1},{1,0},{-1,0}};
+    public boolean exist(char[][] board, String word) {
+        int[][] mark=new int[board.length][board[0].length];
+        for(int i=0;i< board.length;i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if (dfs(board, i, j, 1, word,mark)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean dfs(char[][] board,int i,int j,int index,String word,int[][] mark){
+        if(word.charAt(index-1)!=board[i][j]){
+            return false;
+        }
+        if(index==word.length()){
+            return false;
+        }
+        mark[i][j]=1;
+        int newi,newj;
+        for(int[] dir:direct){
+            newi=i+dir[0];
+            newj=j+dir[1];
+            if(newi>=0&&newi<= board.length-1&&newj>=0&&newj<=board[0].length){
+                if(mark[newi][newj]==0){
+                    if(dfs(board,newi,newj,index+1,word,mark)){
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+        mark[i][j]=0;
+        return false;
+    }
+```
+
 
 
 ## 数据结构
@@ -893,6 +1041,49 @@ class Solution {
 
 
 
+##### [84. 柱状图中最大的矩形](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
+
+```
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+public class Solution {
+
+    public int largestRectangleArea(int[] heights) {
+        int len = heights.length;
+        if (len == 0) {
+            return 0;
+        }
+        if (len == 1) {
+            return heights[0];
+        }
+
+        int area = 0;
+        int[] newHeights = new int[len + 2];
+        for (int i = 0; i < len; i++) {
+            newHeights[i + 1] = heights[i];
+        }
+        len += 2;
+        heights = newHeights;
+
+        Deque<Integer> stack = new ArrayDeque<>();
+        stack.addLast(0);
+
+        for (int i = 1; i < len; i++) {
+            while (heights[stack.peekLast()] > heights[i]) {
+                int height = heights[stack.removeLast()];
+                int width  = i - stack.peekLast() - 1;
+                area = Math.max(area, width * height);
+            }
+            stack.addLast(i);
+        }
+        return area;
+    }
+}
+```
+
+
+
 #### 哈希表
 
 ##### [1. 两数之和](https://leetcode-cn.com/problems/two-sum/)
@@ -1246,6 +1437,39 @@ class Solution {
 }
 ```
 
+##### [75. 颜色分类](https://leetcode-cn.com/problems/sort-colors/)
+
+```
+class Solution {
+    public void sortColors(int[] nums) {
+        //p0是下一个0该待的位置
+        //i 是要不断扩充的区间最右边，下一个1该待的位置
+        //p2是下一个2该待的位置
+        int i=0,p0=0;
+        int p2=nums.length-1;
+
+        while(i<=p2){
+            if(nums[i]==1){
+                i++;
+            }else if(nums[i]==2){
+                swap(nums,i,p2);
+                p2--;
+            }else{
+                swap(nums,i,p0);
+                p0++;
+                i++;
+            }
+        }
+    }
+
+    void swap(int[] s, int left, int right) {
+        int temp = s[left];
+        s[left] = s[right];
+        s[right] = temp;
+    }
+}
+```
+
 
 
 ##### [581\. 最短无序连续子数组](https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/)
@@ -1360,6 +1584,47 @@ class Solution {
     }
 }
 ```
+
+##### [76. 最小覆盖子串](https://leetcode-cn.com/problems/minimum-window-substring/)
+
+```
+    public String minWindow(String s, String t) {
+        HashMap<Character,Integer> tmap=new HashMap<>();
+        HashMap<Character,Integer> smap=new HashMap<>();
+        int l=0,r=0;
+        int start=-1,end=-1;
+        int curMin=Integer.MAX_VALUE;
+        for(char c:t.toCharArray()){
+            tmap.put(c,tmap.getOrDefault(c,0)+1);
+        }
+        while(r<s.length()){
+            smap.put(s.charAt(r),smap.getOrDefault(s.charAt(r),0)+1);
+
+            while(check(smap,tmap)&&l<=r){
+                if(r-l+1<curMin) {
+                    start = l;
+                    end = r;
+                    curMin=end-start+1;
+                }
+                if (tmap.containsKey(s.charAt(l))) {
+                    smap.put(s.charAt(l), smap.getOrDefault(s.charAt(l), 0) - 1);
+                }
+                l++;
+            }
+            r++;
+        }
+        if(start==-1&&end==-1){
+            return "";
+        }
+        return s.substring(start,end+1);
+    }
+
+    private boolean check(Map<Character,Integer> s,Map<Character,Integer> t){
+        return t.keySet().stream().allMatch(key->t.getOrDefault(key,0)<=(s.getOrDefault(key,0)));
+    }
+```
+
+
 
 ##### [209. 长度最小的子数组](https://leetcode-cn.com/problems/minimum-size-subarray-sum/)
 
