@@ -128,6 +128,28 @@ class Solution {
 
 
 
+##### [96. 不同的二叉搜索树](https://leetcode-cn.com/problems/unique-binary-search-trees/)
+
+```
+class Solution {
+    public int numTrees(int n) {
+        int[] dp=new int[n+1];
+        dp[0]=1;
+        dp[1]=1;
+        for(int i=2;i<=n;i++) {
+            for (int j = 1; j <= i; j++) {
+                dp[i] = dp[i] + dp[j - 1] * dp[i - j];
+            }
+        }
+        return dp[n];
+
+    }
+}
+
+```
+
+
+
 ##### [312\. 戳气球](https://leetcode-cn.com/problems/burst-balloons/)
 ```java
 class Solution {
@@ -699,6 +721,164 @@ class Solution {
 }
 ```
 #### 二叉树
+
+##### [94. 二叉树的中序遍历](https://leetcode-cn.com/problems/binary-tree-inorder-traversal/)
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res=new ArrayList<>();
+        inorder0(root,res);
+        return  res;
+    }
+
+    private void inorder0(TreeNode root,List<Integer> res){
+        if(root==null) {
+            return;
+        }
+        inorder0(root.left,res);
+        res.add(root.val);
+        inorder0(root.right,res);
+
+    }
+}
+```
+
+##### [98. 验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree/)
+
+```
+    public boolean isValidBST(TreeNode root) {
+        if(root==null){
+            return true;
+        }
+        return isValidBST0(root,Long.MIN_VALUE,Long.MAX_VALUE);
+    }
+
+    private boolean isValidBST0(TreeNode root,long lmax,long rmin){
+        if(root==null) return true;
+        if(root.val>lmax&&root.val<rmin){
+            return isValidBST0(root.left,lmax,root.val)&&isValidBST0(root.right,root.val,rmin);
+        }
+        return false;
+    }
+```
+
+##### [101. 对称二叉树](https://leetcode-cn.com/problems/symmetric-tree/)
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        if(root==null) return true;
+        return isSymmetric0(root.left,root.right);
+    }
+    private boolean isSymmetric0(TreeNode l,TreeNode r){
+        if(l==null&&r==null) return true;
+        if(l==null||r==null) return false;
+        if(l.val!=r.val) return false;
+        return isSymmetric0(l.right,r.left)&&isSymmetric0(l.left,r.right);
+    }
+
+}
+```
+
+
+
+##### [102. 二叉树的层序遍历](https://leetcode-cn.com/problems/binary-tree-level-order-traversal/)
+
+```
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        LinkedList<TreeNode> queue=new LinkedList<>();
+        List<List<Integer>> result=new ArrayList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            int currentSize=queue.size();
+            List<Integer> list=new ArrayList<>();
+            for(int i=0;i<currentSize;i++){
+                TreeNode node=queue.poll();
+                list.add(node.val);
+                if(node.left!=null){
+                    queue.add(node.left);
+                }
+                if(node.right!=null){
+                    queue.add((node.right));
+                }
+            }
+            result.add(list);
+        }
+        return result;
+    }
+```
+
+
+
+##### [104. 二叉树的最大深度](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/)
+
+```
+class Solution {
+    public int maxDepth(TreeNode root) {
+        if(root==null) return 0;
+        return Math.max(maxDepth(root.left),maxDepth(root.right))+1;
+    }
+}
+```
+
+##### [105. 从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+```
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        return buildTree0(preorder,inorder,0,preorder.length,0,inorder.length);
+    }
+
+    public TreeNode buildTree0(int[] preorder, int[] inorder,int pl,int pr,int il,int ir ){
+        if(pl>pr) return null;
+        TreeNode node=new TreeNode(preorder[pl]);
+        int index=findRootIndex(inorder,preorder[pl]);
+        node.left=buildTree0(preorder, inorder, pl+1, pl+(index-il), il, index-1);
+        node.right=buildTree0(preorder, inorder, pl+(index-il)+1, pr, index+1, ir);
+        return node;
+    }
+    private int findRootIndex(int[] inorder,int val){
+        for(int i=0;i<inorder.length;i++){
+            if(inorder[i]==val){
+                return i;
+            }
+        }
+        return -1;
+    }
+```
+
+
+
 ##### [337\. 打家劫舍 III](https://leetcode-cn.com/problems/house-robber-iii/)
 ```java
 /**
