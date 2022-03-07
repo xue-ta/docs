@@ -148,6 +148,42 @@ class Solution {
 
 ```
 
+##### [139. 单词拆分](https://leetcode-cn.com/problems/word-break/)
+
+```
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        char[] chars=s.toCharArray();
+        boolean[] dp=new boolean[s.length()+1];
+        dp[0]=true;
+        for(int i=1;i<chars.length+1;i++) {
+            for (int j =0; j < i; j++) {
+                if (dp[j] && wordDict.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                }
+            }
+        }
+        return dp[s.length()];
+    }
+}
+```
+
+##### [198. 打家劫舍](https://leetcode-cn.com/problems/house-robber/)
+
+```
+    public int rob(int[] nums) {
+        if(nums.length==0) return 0;
+        if(nums.length==1) return nums[0];
+        int[] dp=new int[nums.length];
+        dp[0]=nums[0];
+        dp[1]=Math.max(nums[0],nums[1]);
+        for(int i=2;i<nums.length;i++){
+            dp[i]=Math.max(dp[i-2]+nums[i],dp[i-1]);
+        }
+        return dp[nums.length-1];
+    }
+```
+
 
 
 ##### [312\. 戳气球](https://leetcode-cn.com/problems/burst-balloons/)
@@ -178,6 +214,23 @@ public:
 ```
 
 #### 股票问题
+
+##### [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
+
+```
+    public int maxProfit(int[] prices) {
+        int sum=0;
+        int max=0;
+        int curMin=Integer.MAX_VALUE;
+        for(int i=0;i< prices.length;i++){
+            max=Math.max(max,prices[i]-curMin);
+            curMin=Math.min(curMin,prices[i]);
+        }
+        return max;
+    }
+```
+
+
 
 #### 背包问题
 
@@ -527,7 +580,12 @@ class Solution {
 }
 
 ```
+归并排序
+
+
+
 快排
+
 ```java
 class Solution {
     public int[] topKFrequent(int[] nums, int k) {
@@ -576,6 +634,40 @@ class Solution {
 ```
 
 ### 搜索
+
+#### 深度优先
+
+##### [200. 岛屿数量](https://leetcode-cn.com/problems/number-of-islands/)
+
+```
+class Solution {
+    public int numIslands(char[][] grid) {
+        int result=0;
+        for(int i=0;i<grid.length;i++){
+            for(int j=0;j<grid[0].length;j++){
+                if(grid[i][j]=='1') {
+                    result++;
+                    dfs(grid, i, j);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void dfs(char[][] grid,int i,int j){
+        int[][] directs=new int[][]{{0,1},{1,0},{0,-1},{-1,0}};
+        if(i<0||i>=grid.length||j<0||j>=grid[0].length||grid[i][j]=='0'){
+            return;
+        }
+        grid[i][j]='0';
+        for(int[] direct:directs){
+            dfs(grid,i+direct[0],j+direct[1]);
+        }
+    }
+}
+```
+
+
 
 #### 深度优先
 
@@ -877,6 +969,96 @@ class Solution {
     }
 ```
 
+##### [114. 二叉树展开为链表](https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/)
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public void flatten(TreeNode root) {
+        if(root==null) return;
+        List<TreeNode> list=new ArrayList<>();
+        LinkedList<TreeNode> stack=new LinkedList<>();
+        TreeNode node=root;
+        stack.push(node);
+        while(!stack.isEmpty()){
+            while(node!=null){
+                list.add(node);
+                stack.push(node);
+                node=node.left;
+            }
+            node=stack.pop();
+            node=node.right;
+        }
+        for(int i=0;i<list.size()-1;i++){
+            list.get(i).left=null;
+            list.get(i).right= list.get(i+1);
+        }
+    }
+}
+```
+
+##### [124. 二叉树中的最大路径和](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int maxSum = Integer.MIN_VALUE;
+
+    public int maxPathSum(TreeNode root) {
+        maxGain(root);
+        return maxSum;
+    }
+
+    public int maxGain(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        // 递归计算左右子节点的最大贡献值
+        // 只有在最大贡献值大于 0 时，才会选取对应子节点
+        int leftGain = Math.max(maxGain(node.left), 0);
+        int rightGain = Math.max(maxGain(node.right), 0);
+
+        // 节点的最大路径和取决于该节点的值与该节点的左右子节点的最大贡献值
+        int priceNewpath = node.val + leftGain + rightGain;
+
+        // 更新答案
+        maxSum = Math.max(maxSum, priceNewpath);
+
+        // 返回节点的最大贡献值
+        return node.val + Math.max(leftGain, rightGain);
+    }
+}
+```
+
 
 
 ##### [337\. 打家劫舍 III](https://leetcode-cn.com/problems/house-robber-iii/)
@@ -1137,6 +1319,54 @@ class Solution {
        }
    
    ```
+##### [155. 最小栈](https://leetcode-cn.com/problems/min-stack/)
+
+```
+class MinStack {
+
+    private Deque<Integer> stack;
+    private Deque<Integer> minStack;
+    /** initialize your data structure here. */
+    public MinStack() {
+
+        stack=new LinkedList<Integer>();
+        minStack=new LinkedList<Integer>();
+        minStack.push(Integer.MAX_VALUE);
+    }
+
+
+    public void push(int val) {
+        stack.push(val);
+        minStack.push(Math.min(val,minStack.peek()));
+    }
+
+    public void pop() {
+        stack.pop();
+        minStack.pop();
+    }
+
+    public int top() {
+        return stack.peek();
+    }
+
+    public int getMin() {
+        return minStack.peek();
+    }
+}
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(val);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
+
+```
+
+
+
 ##### [394\. 字符串解码](https://leetcode-cn.com/problems/decode-string/)
 
 ```java
@@ -1282,6 +1512,32 @@ public class Solution {
     }
 ```
 
+##### [128. 最长连续序列](https://leetcode-cn.com/problems/longest-consecutive-sequence/)
+
+```
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        int longest=0;
+        Set<Integer> set=new HashSet<>();
+        for(int i=0;i<nums.length;i++){
+            set.add(nums[i]);
+        }
+        for(Integer s:set){
+            if(!set.contains(s+1)){
+                int curLong=1;
+                int i=s;
+                while(set.contains(i-1)){
+                    curLong++;
+                    i--;
+                }
+                longest=Math.max(curLong,longest);
+            }
+        }
+        return longest;
+    }
+}
+```
+
 
 
    ##### [任务规划](http://3ms.huawei.com/km/groups/3803117/blogs/details/9544197?l=zh-cn)
@@ -1369,6 +1625,26 @@ class Solution {
         }
 ```
 
+##### [141. 环形链表](https://leetcode-cn.com/problems/linked-list-cycle/)
+
+```
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        ListNode slow=head;
+        ListNode fast=head;
+        while(fast!=null&&fast.next!=null){
+            slow=slow.next;
+            fast=fast.next.next;
+            if(slow==fast){
+                return true;
+            }
+        }
+        return false;
+    }
+
+}
+```
+
 
 
 ##### [143. 重排链表](https://leetcode-cn.com/problems/reorder-list/)
@@ -1422,7 +1698,215 @@ class Solution {
 }
 ```
 
+##### [146. LRU 缓存](https://leetcode-cn.com/problems/lru-cache/)
+
+```
+public class LRUCache {
+    class DLinkedNode {
+        int key;
+        int value;
+        DLinkedNode prev;
+        DLinkedNode next;
+        public DLinkedNode() {}
+        public DLinkedNode(int _key, int _value) {key = _key; value = _value;}
+    }
+
+    private Map<Integer, DLinkedNode> cache = new HashMap<Integer, DLinkedNode>();
+    private int size;
+    private int capacity;
+    private DLinkedNode head, tail;
+
+    public LRUCache(int capacity) {
+        this.size = 0;
+        this.capacity = capacity;
+        // 使用伪头部和伪尾部节点
+        head = new DLinkedNode();
+        tail = new DLinkedNode();
+        head.next = tail;
+        tail.prev = head;
+    }
+
+    public int get(int key) {
+        DLinkedNode node = cache.get(key);
+        if (node == null) {
+            return -1;
+        }
+        // 如果 key 存在，先通过哈希表定位，再移到头部
+        moveToHead(node);
+        return node.value;
+    }
+
+    public void put(int key, int value) {
+        DLinkedNode node = cache.get(key);
+        if (node == null) {
+            // 如果 key 不存在，创建一个新的节点
+            DLinkedNode newNode = new DLinkedNode(key, value);
+            // 添加进哈希表
+            cache.put(key, newNode);
+            // 添加至双向链表的头部
+            addToHead(newNode);
+            ++size;
+            if (size > capacity) {
+                // 如果超出容量，删除双向链表的尾部节点
+                DLinkedNode tail = removeTail();
+                // 删除哈希表中对应的项
+                cache.remove(tail.key);
+                --size;
+            }
+        }
+        else {
+            // 如果 key 存在，先通过哈希表定位，再修改 value，并移到头部
+            node.value = value;
+            moveToHead(node);
+        }
+    }
+
+    private void addToHead(DLinkedNode node) {
+        node.prev = head;
+        node.next = head.next;
+        head.next.prev = node;
+        head.next = node;
+    }
+
+    private void removeNode(DLinkedNode node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void moveToHead(DLinkedNode node) {
+        removeNode(node);
+        addToHead(node);
+    }
+
+    private DLinkedNode removeTail() {
+        DLinkedNode res = tail.prev;
+        removeNode(res);
+        return res;
+    }
+}
+```
+
+##### [148. 排序链表](https://leetcode-cn.com/problems/sort-list/)
+
+```
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode sortList(ListNode head) {
+        return sortList(head, null);
+    }
+
+    public ListNode sortList(ListNode head, ListNode tail) {
+        if (head == null) {
+            return head;
+        }
+        if (head.next == tail) {
+            head.next = null;
+            return head;
+        }
+        ListNode slow = head, fast = head;
+        while (fast != tail) {
+            slow = slow.next;
+            fast = fast.next;
+            if (fast != tail) {
+                fast = fast.next;
+            }
+        }
+        ListNode mid = slow;
+        ListNode list1 = sortList(head, mid);
+        ListNode list2 = sortList(mid, tail);
+        ListNode sorted = merge(list1, list2);
+        return sorted;
+    }
+
+    private ListNode merge(ListNode l1,ListNode l2){
+        if(l1==null)
+            return l2;
+        if(l2==null)
+            return l1;
+        if(l1.val<l2.val){
+            l1.next=merge(l1.next,l2);
+            return l1;
+        }else{
+            l2.next=merge(l1,l2.next);
+            return l2;
+        }
+    }
+
+}
+
+```
+
+
+
+##### [160. 相交链表](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/)
+
+```
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode result=null;
+        Set<ListNode> set=new HashSet<>();
+        while(headA!=null){
+            set.add(headA);
+            headA=headA.next;
+        }
+        while(headB!=null){
+            if(set.contains(headB)){
+                result=headB;
+                break;
+            }
+            headB=headB.next;
+        }
+        return result;
+    }
+```
+
+
+
 ## 技巧
+
+
+
+#### 选举
+
+##### [169. 多数元素](https://leetcode-cn.com/problems/majority-element/)
+
+```
+class Solution {
+    public int majorityElement(int[] nums) {
+        int count=0;
+        Integer can=null;
+        for(int num:nums){
+            if(count==0) {
+                can=num;
+                count++;
+            } else {
+                count = count + (can == num ? 1 : -1);
+            }
+        }
+        return can;
+    }
+}
+```
+
+
 
 #### 二分法
 
@@ -1889,6 +2373,24 @@ class Solution6472 {
 ```
 
 #### 位运算
+
+
+
+##### [136. 只出现一次的数字](https://leetcode-cn.com/problems/single-number/)
+
+```
+class Solution {
+    public int singleNumber(int[] nums) {
+        int result=0;
+        for(int num:nums){
+            result=num^result;
+        }
+        return result;
+    }
+}
+```
+
+
 
 ##### [338\. 比特位计数](https://leetcode-cn.com/problems/counting-bits/)
 ```java
