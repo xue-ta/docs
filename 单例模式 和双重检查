@@ -1,0 +1,67 @@
+### 单例模式 懒汉式
+
+```
+class Singleton {
+
+    //类初始化时，不初始化这个对象(延时加载，真正用的时候再创建)
+    private volatile static Singleton instance;
+
+    //构造器私有化
+    private Singleton(){}
+
+    //方法同步，调用效率低
+    public static Singleton getInstance(){
+        if(instance==null){
+            synchronized (Singleton.class) {
+                if(instance==null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+```
+
+### 双重检查的应用
+
+#### 应用场景
+
+用户登陆时候 需要判断是否第一次登陆  如果第一次登陆的话，需要建立网关和平台的长连接 ,登陆平台 网关在和平台建立连接时候由于底层实现存在线程安全风险，需要加锁保护
+
+如果用户是重复登陆的，则不需要建立网关和平台的连接 直接复用之前的连接进行用户名和密码鉴权即可
+
+之前的代码逻辑
+
+```
+login(){
+    synchronized(lock){
+        if(user_first_login()){
+            create_link()
+            loginPlatform()
+        }
+    }
+    if(!user_first_login()){
+    	loginByPwd()
+    }
+}
+```
+
+修改为双重检查，如果用户
+
+```
+login(){
+    if(user_first_login()){
+        synchronized(lock){
+            if(user_first_login()){
+                create_link()
+                loginPlatform()
+            }
+        }
+    }
+    if(!user_first_login()){
+    	loginByPwd()
+    }
+}
+```
+
