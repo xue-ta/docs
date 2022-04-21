@@ -1,0 +1,38 @@
+网络编程
+
+
+
+##### 心跳机制
+
+客户端需要考虑定时与服务端心跳  服务端才能感知客户端是否在线
+
+
+
+##### 重连机制
+
+客户端需要考虑与服务端断开后重新连接 
+
+
+
+#### 复用长连接  如何通过异步消息实现同步调用
+
+发送和接收的消息都需要唯一的transId标识，构建一个Map，存储 transId和异步接收的 Response
+
+同步调用发送时候，向Map.put(transId,response)
+
+```
+ sendAsyncMessage()
+ synchronized (response){
+ 	while(response.isEmpty){
+ 		response.wait(30s)
+ 	}
+ }
+ return response;
+```
+
+消息接收的时候
+
+```
+response.notifyAll
+```
+
