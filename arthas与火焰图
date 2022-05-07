@@ -1,0 +1,37 @@
+## 使用arthas工具结合火焰图分析CPU占用
+
+ 启动arthas attach到java进程
+
+
+
+开启profiler
+
+```
+ profiler start
+```
+
+开启采样
+
+```
+profiler getSamples
+```
+
+查看采样状态  已采样时间
+
+```
+profiler status
+```
+
+生成火焰图  svg格式不推荐
+
+```
+profiler stop --format html --file /home/demo.html
+```
+
+分析火焰图
+
+火焰图是一定时间内该进程函数调用栈的采样  有平顶的地方，即调用栈最深的函数且占用cpu最长时间片的是系统的性能瓶颈
+
+当然也可能是正常情况
+
+比如发现nio线程主要耗时在 epoll_wait write read 函数上，通常是因为nio通信繁忙导致
