@@ -4,4 +4,4 @@ redis的客户端Redission 分布式任务调度框架LTS都有使用netty进行
 #### 为什么选择Netty
 Netty包装了java原生的NIO功能 规避了原生NIO的一些bug,比如说空轮询
 Netty实现了高性能的Reactor网络编程模型
-Netty的生态比较好,资料文档多 与之相比,mina的使用者较少,遇到问题不好查资料 
+Netty的生态比较好,资料文档多 与之相比,mina的使用者较少,遇到问题不好查资料 mina也规避了NIO空轮询的bug 但是很多人不知道mina规避了NIO空轮询的bug
