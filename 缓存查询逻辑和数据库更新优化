@@ -1,0 +1,14 @@
+1.项目中使用了guava cache,业务上批量更新设备信息时候，会addorUpdate更新缓存,更新缓存时候会调用guavacache的get方法，如果get不到就会查数据库
+第一次批量addorupdate 缓存的时候，缓存中get不到，会循环查询数据库  这样效率很低
+
+优化后,批量addorupdate时候调用guava cache的getall方法，批量更新，getall方法有这样的语义，如果getall的keys里面某个在缓存中查询不到，
+会调用loadall方法批量从数据库加载数据，因此需要实现loadall方法，这样就不会每次从数据库单个查询
+
+
+2.使用mybatis批量插入数据库时候
+拼接sql 约等于 sqlsession的batch模式  > mapper.xml文件里面使用foreach
+
+
+
+
+3.批量插入时候 插入太多和太少效率都不高
