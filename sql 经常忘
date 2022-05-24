@@ -1,0 +1,10 @@
+
+1 查询条件为列表时候查询
+
+select * from from TEST t where (t.age,t.name) in ((12,'aaa'),(11,'bbb'));
+
+
+
+2.postgres进入数据库
+
+psql -d sql_name
