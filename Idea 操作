@@ -1,2 +1,6 @@
 ###### 显示本地更改 
 settings ->Version Control->commit -> 取消 use non-modal commit interface勾选
+
+
+###### 格式化代码
+ Ctrl+Shift+Alt+L
