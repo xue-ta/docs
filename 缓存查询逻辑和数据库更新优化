@@ -12,3 +12,6 @@
 
 
 3.批量插入时候 插入太多和太少效率都不高
+
+
+4.mapper.xml使用foreach插入的时候，不要在最外层foreach ，要 insert table_name values 在这里foreach()
