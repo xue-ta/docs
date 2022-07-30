@@ -1,0 +1,1 @@
+容器占用的cpu核数 /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_quota_us  / /sys/fs/cgroup/cpu,cpuacct/cpu.cfs_period_us
