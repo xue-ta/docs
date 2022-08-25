@@ -1,0 +1,5 @@
+1.使用mina作为客户端 connector连接时候是异步的，如果要确保连接成功 请进行同步等待，dispose方法也是默认异步的，如果确保释放成功，也请进行同步等待
+
+
+
+2.connector是重量级的 没有必要建立一个连接就new connector，可以服用同一个connector
