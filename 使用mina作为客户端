@@ -3,3 +3,6 @@
 
 
 2.connector是重量级的 没有必要建立一个连接就new connector，可以服用同一个connector
+
+
+3.使用session.write发送数据时候  记得要加锁  否则可能会出现丢失消息的情况
