@@ -1,1 +1,27 @@
 JAVA NIO的select()方法是会阻塞的，直到某个channel有读写事件产生
+
+
+怎么看待OP_WRITE事件
+OP_WRITE事件在缓冲区没有满之前一直会触发的 所以如果写入完成之后，需要向Seletctor取消注册写事件 否则系统会陷入空转
+```
+循环执行Selector.select
+if(key.isReadable()) {
+	// 200M Buffer
+    ByteBuffer buffer = .... 
+    // 注册写事件
+    key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
+    // 绑定Buffer
+    key.attach(buffer);
+}
+// 可写分支
+if(key.isWritable()) {
+    ByteBuffer buffer = (ByteBuffer) key.attachment();
+    SocketChannel channel = (SocketChannel) key.channel();
+    if (buffer.hasRemaining()) {
+        channel.write(buffer)
+    } else {
+        // 发送完了就取消写事件，否则下次还会进入写事件分支（因为只要还可写，就会进入）
+        key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
+    }
+}
+```
