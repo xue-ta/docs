@@ -24,3 +24,8 @@ SQL语句会预编译在数据库系统中。执行计划同样会被缓存起�
 为了减少数据库的负载，生产环境中德JDBC代码你应该总是使用PreparedStatement 。值得注意的一点是：为了获得性能上的优势，应该使用参数化sql查询而不是字符串追加的方式
 
 
+6.mybatis 
+会进行预编译
+select * from user where name = #{name};
+不会进行预编译
+select * from user where name = ${name};
