@@ -15,3 +15,12 @@
 
 
 4.mapper.xml使用foreach插入的时候，不要在最外层foreach ，要 insert table_name values 在这里foreach()
+
+
+
+5.PreparedStatement比 Statement 更快使用 PreparedStatement 最重要的一点好处是它拥有更佳的性能优势，
+SQL语句会预编译在数据库系统中。执行计划同样会被缓存起来，它允许数据库做参数化查询。
+使用预处理语句比普通的查询更快，因为它做的工作更少（数据库对SQL语句的分析，编译，优化已经在第一次查询前完成了）。
+为了减少数据库的负载，生产环境中德JDBC代码你应该总是使用PreparedStatement 。值得注意的一点是：为了获得性能上的优势，应该使用参数化sql查询而不是字符串追加的方式
+
+
