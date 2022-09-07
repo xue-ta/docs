@@ -8,3 +8,10 @@ select * from from TEST t where (t.age,t.name) in ((12,'aaa'),(11,'bbb'));
 2.postgres进入数据库
 
 psql -d sql_name
+
+
+
+3.sql 语法顺序
+
+FROM > WHERE > GROUP BY > HAVING > SELECT的字段 > DISTINCT > ORDER BY > LIMIT
+FROM 后使用函数的情况下会使用GROUP BY
