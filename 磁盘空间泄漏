@@ -1,0 +1,7 @@
+
+
+文件处于 deleted状态  但是又由于某些进程持有这个文件的句柄  这个文件没有办法释放  占用磁盘空间
+
+
+实际项目中 服务一直会向 demo.log写入日志，自定义实现压缩日志功能，使用IoUtils.Copy 方法 将demo.log 复制到demo.log.tmp,然后对tmp文件进行删除   
+但是由于简单的copy不会让服务进程持有的句柄改变   所以demo.log.tmp一直处于deleted状态 磁盘控制不能释放
