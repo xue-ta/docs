@@ -1,0 +1,21 @@
+1 性能测试 通过性能测试可以观测系统极限情况下的并发能力，设置流控参数
+
+根据实际的性能测试结果  服务并发的瓶颈通常在CPU 而不是内存
+
+
+通用的接口由于参数不同可能会导致系统并发的能力不同，比如分页大小，参数不同是否影响不同的组件
+
+
+
+
+
+
+
+2 jemeter的使用
+
+
+1.只执行一次可以使用setup线程组  让setup线程组单线程运行
+2.beanshell pre post processer 在每个请求前后都会执行
+3.登录请求这种 要放在 only once controller里面  ，only once controller 每个线程执行一次
+4.线程组间交互通讯 可以用csv来传递 
+5. 需要cookie的情况使用cookie管理器   设置http header的话使用http header管理器
