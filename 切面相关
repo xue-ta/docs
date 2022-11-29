@@ -1,0 +1,3 @@
+如何通过切点找到所对应的Method实例 
+
+((MethodSignature) (((MethodInvocationProceedingJoinPoint) pjp).getSignature())).getMethod();
