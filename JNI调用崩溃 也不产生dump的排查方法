@@ -1,0 +1,43 @@
+1.main方法中要加 这个是防止JNI调用直接崩了 不生成dump和日志记录
+System.setProperty("jna.protected","true");
+
+2.切换到 $JAVA_HOME/jre/lib/security/java.security
+
+增加  security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
+
+要不然直接jar -jar 启动的时候会报错 keystore证书相关的
+
+
+3.特权命令进入容器
+docker exec -it -u root --privileged $(docker ps | grep vcnapi | awk 'NR >=1 {print $1}') bash
+
+执行
+ulimit -c unlimited
+
+不执行生成不了dump文件
+
+4.$JAVA_HOME/bin/java -jar restful.jar 启动  然后会生成core文件和日志
+
+错误日志在当前目录下
+
+coredump在/var/log/coredump
+
+5 如果是进程崩溃的话 需要用GDB去调试dump文件
+
+
+
+
+6 容器 内执行java -version  ,确定java版本  然后CMC上找到和容器上b版本一致的jdk （严格一致）
+
+
+
+
+7执行
+
+gdb ./jdk1.8.0_352/bin/java ./core_\!usr\!lib\!jvm\!jre1.8.0_352\!bin\!java.pid_492692.signal_6.time_1671551281.host_A-xxxx-33eeaec92c004000800000009e403f58-cim
+
+
+
+
+
+8查看堆栈 看看服务崩在了哪里
