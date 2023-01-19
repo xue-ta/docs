@@ -1,0 +1,2 @@
+构建工具 pip  类比java的maven
+pip install -r requirements.txt
